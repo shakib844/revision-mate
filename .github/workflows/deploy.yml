@@ -34,9 +34,10 @@ jobs:
           APP_DIR=$(find app -name package.json -print -quit | xargs dirname)
           echo "APP_DIR=$APP_DIR" >> $GITHUB_ENV
 
-      - name: Install and build
+            - name: Install and build
         run: |
           npm install --prefix "$APP_DIR"
+          npm pkg set scripts.build="vite build" --prefix "$APP_DIR"
           npm run build --prefix "$APP_DIR"
 
       - name: Upload website
