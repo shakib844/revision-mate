@@ -3,7 +3,8 @@ name: Deploy Revision Mate
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -34,7 +35,7 @@ jobs:
           APP_DIR=$(find app -name package.json -print -quit | xargs dirname)
           echo "APP_DIR=$APP_DIR" >> $GITHUB_ENV
 
-            - name: Install and build
+      - name: Install and build
         run: |
           npm install --prefix "$APP_DIR"
           npm pkg set scripts.build="vite build" --prefix "$APP_DIR"
@@ -43,14 +44,14 @@ jobs:
       - name: Upload website
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ${{ env.APP_DIR }}/dist
+          path: app/revision-mate/dist
 
   deploy:
+    runs-on: ubuntu-latest
+    needs: build
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
     steps:
       - name: Deploy
         id: deployment
